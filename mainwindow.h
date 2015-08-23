@@ -1,9 +1,13 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QMainWindow>
+#include "gamescene.h"
+#include "gameview.h"
+#include <QWidget>
+#include <QBoxLayout>
+#include <QPushButton>
 
-class MainWindow : public QMainWindow
+class MainWindow : public QWidget
 {
     Q_OBJECT
 
