@@ -15,6 +15,9 @@ MainWindow::MainWindow(QWidget *parent)
     QHBoxLayout *Mainlayout = new QHBoxLayout;
     GameScene *MainScene = new GameScene(this, 700, 5);
     GameView *MainView = new GameView(MainScene, this);
+    connect(MainView, SIGNAL(Press(int,int)), MainScene, SLOT(Press(int,int)));
+    connect(MainView, SIGNAL(Move(int,int)), MainScene, SLOT(Move(int,int)));
+    connect(MainView, SIGNAL(Release(int,int)), MainScene, SLOT(Release(int,int)));
     Mainlayout->addWidget(MainView);
     Mainlayout->addLayout(Rightlayout);
     this->setLayout(Mainlayout);

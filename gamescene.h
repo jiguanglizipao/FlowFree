@@ -6,20 +6,26 @@
 #include <QObject>
 #include <QWidget>
 #include <QPoint>
+#include <QtMath>
+#include <QVector>
 
 class GameScene : public QGraphicsScene
 {
     Q_OBJECT
+
 public:
     GameScene(QWidget *parent = 0, int _size = 700, int _n = 5);
+
 public slots:
-    void Update(bool flag, int x=0, int y=0);
+    void Press(int x, int y);
+    void Move(int x, int y);
+    void Release(int x, int y);
+
 private:
-    int n;
-    const int size;
-    double Psize, FlagR, CircleR;
+    int n, size;
+    double Psize, FlagR, CircleR, PathR;
+    int moveFlag;
     void makeMap();
-    //void drawFlagCircle(int i, int j, QPen pen = QPen(), QBrush brush = QBrush());
     void drawCircle(int i, int j, QPen pen = QPen(), QBrush brush = QBrush());
     struct Flags
     {
@@ -33,6 +39,14 @@ private:
     };
     QVector<Flags> flags;
     void addFlag(Flags flag);
+    QVector<QVector<int> > filled;
+    QVector<QVector<QPoint> > path;
+    bool checkFlag(int x, int y);
+    void Update(int x=0, int y=0);
+    double distance(QPoint x)
+    {
+        return qSqrt(qPow(x.x(), 2) + qPow(x.y(), 2));
+    }
 };
 
 #endif // GAMESCENE_H

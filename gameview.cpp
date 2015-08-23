@@ -11,18 +11,21 @@ GameView::GameView(GameScene *scene, QWidget *parent)
 
 void GameView::mousePressEvent(QMouseEvent  *event)
 {
-    qDebug()<<"Press "<<event->button()<<" "<<event->pos().x()<<" "<<event->pos().y();
-    Scene->Update(true, event->pos().x(), event->pos().y());
+    //qDebug()<<"Press "<<event->button()<<" "<<event->pos().x()<<" "<<event->pos().y();
+    if(event->button() == 1)emit Press(event->pos().x(), event->pos().y());
+    //Scene->Update(true, event->pos().x(), event->pos().y());
 }
 
 void GameView::mouseMoveEvent(QMouseEvent  *event)
 {
     qDebug()<<"Move "<<event->pos().x()<<" "<<event->pos().y();
-    Scene->Update(true, event->pos().x(), event->pos().y());
+    emit Move(event->pos().x(), event->pos().y());
+    //Scene->Update(true, event->pos().x(), event->pos().y());
 }
 
 void GameView::mouseReleaseEvent(QMouseEvent  *event)
 {
-    qDebug()<<"Release "<<event->button()<<" "<<event->pos().x()<<" "<<event->pos().y();
-    Scene->Update(false, event->pos().x(), event->pos().y());
+    //qDebug()<<"Release "<<event->button()<<" "<<event->pos().x()<<" "<<event->pos().y();
+    if(event->button() == 1)emit Release(event->pos().x(), event->pos().y());
+    //Scene->Update(false, event->pos().x(), event->pos().y());
 }

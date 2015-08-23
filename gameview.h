@@ -15,7 +15,9 @@ protected:
     void mouseMoveEvent(QMouseEvent  *event);
     void mouseReleaseEvent(QMouseEvent *event);
 signals:
-    void ResizeSignal(int w, int h);
+    void Press(int x, int y);
+    void Move(int x, int y);
+    void Release(int x, int y);
 private:
     GameScene *Scene;
 };
