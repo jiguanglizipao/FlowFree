@@ -33,6 +33,7 @@ class GameScene : public QGraphicsScene
 public:
     GameScene(QWidget *parent = 0, int _size = 700);
     void Init(Data &a);
+    void Solve(const QVector<QVector<QPoint> > &_path);
 public slots:
     void Press(int x, int y);
     void Move(int x, int y);

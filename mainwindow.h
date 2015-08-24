@@ -20,10 +20,12 @@ public slots:
     void nextGame();
     void beforeGame();
     void newGame();
+    void solveGame();
 private:
     GameScene *MainScene;
     GameView *MainView;
     QVector<Data> gameData;
+    QVector<QVector<QVector<QPoint> > > gameSave;
     int gameNumber;
 };
 

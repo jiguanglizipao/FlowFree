@@ -170,6 +170,14 @@ void GameScene::Release(int x, int y)
     Update(x, y);
 }
 
+void GameScene::Solve(const QVector<QVector<QPoint> > &_path)
+{
+    path = _path;
+    for(int i=0;i<n;i++)for(int j=0;j<n;j++)filled[i][j]=-1;
+    for(int i=0;i<path.size();i++)for(int j=0;j<path[i].size();j++)filled[path[i][j].x()][path[i][j].y()]=i;
+    Update();
+}
+
 void GameScene::Update(int x, int y)
 {
     this->clear();
