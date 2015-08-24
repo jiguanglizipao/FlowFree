@@ -14,6 +14,17 @@ class MainWindow : public QWidget
 public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
+public slots:
+    void loadGame();
+    void againGame();
+    void nextGame();
+    void beforeGame();
+    void newGame();
+private:
+    GameScene *MainScene;
+    GameView *MainView;
+    QVector<Data> gameData;
+    int gameNumber;
 };
 
 #endif // MAINWINDOW_H

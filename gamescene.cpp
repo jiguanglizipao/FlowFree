@@ -1,9 +1,15 @@
 #include "gamescene.h"
 #include <QDebug>
 
-GameScene::GameScene(QWidget *parent, int _size, int _n)
-    :QGraphicsScene(parent), size(_size), n(_n), moveFlag(-1)
+GameScene::GameScene(QWidget *parent, int _size)
+    :QGraphicsScene(parent), size(_size), n(0), moveFlag(-1)
 {
+    this->setBackgroundBrush(Qt::black);
+}
+
+void GameScene::Init(Data &a)
+{
+    n=a.n;
     Psize = double(size)/double(n);
     filled.resize(n);
     for(int i=0;i<n;i++)filled[i].resize(n);
@@ -11,13 +17,9 @@ GameScene::GameScene(QWidget *parent, int _size, int _n)
     FlagR = Psize*.4;
     CircleR = Psize*.6;
     PathR = Psize*.2;
-    flags.push_back(Flags(QPoint(0, 0), QPoint(1, 4), QPen(Qt::blue), QBrush(Qt::blue)));
-    flags.push_back(Flags(QPoint(3, 0), QPoint(1, 3), QPen(Qt::red), QBrush(Qt::red)));
-    flags.push_back(Flags(QPoint(4, 0), QPoint(2, 3), QPen(Qt::gray), QBrush(Qt::gray)));
-    flags.push_back(Flags(QPoint(3, 1), QPoint(2, 2), QPen(Qt::yellow), QBrush(Qt::yellow)));
-    flags.push_back(Flags(QPoint(2, 4), QPoint(4, 3), QPen(Qt::green), QBrush(Qt::green)));
+    flags = a.flags;
     path.resize(flags.size());
-    for(size_t i=0;i<path.size();i++)path[i].clear();
+    for(int i=0;i<path.size();i++)path[i].clear();
     Update(false);
 }
 
@@ -26,9 +28,19 @@ void GameScene::makeMap()
     for(int i=0;i<n;i++)
         for(int j=0;j<n;j++)
         {
-            this->addRect(i*Psize, j*Psize, Psize, Psize);
+            QPen pen = QPen(Qt::gray);
+            QBrush brush = QBrush(Qt::black);
+            this->addRect(i*Psize, j*Psize, Psize, Psize, pen, brush);
+            if(filled[i][j]!=-1 && filled[i][j]!=moveFlag){
+                brush = flags[filled[i][j]].brush;
+                QColor tmp = flags[filled[i][j]].brush.color();
+                tmp.setAlpha(128);
+                brush.setColor(tmp);
+                this->addRect(i*Psize, j*Psize, Psize, Psize, pen, brush);
+            }
+
         }
-    for(size_t i=0;i<flags.size();i++)addFlag(flags[i]);
+    for(int i=0;i<flags.size();i++)addFlag(flags[i]);
 }
 
 void GameScene::addFlag(Flags flag)
@@ -41,36 +53,49 @@ void GameScene::addFlag(Flags flag)
 void GameScene::drawCircle(int x, int y, QPen pen, QBrush brush)
 {
     const double r = CircleR;
-    QColor tmp = brush.color();tmp.setAlpha(128);
+    QColor tmp = brush.color();tmp.setAlpha(64);
     brush.setColor(tmp);
     this->addEllipse(x-r/2, y-r/2, r, r, pen, brush);
 }
 
 void GameScene::Press(int x, int y)
 {
-    const double r = FlagR/2;
     moveFlag=-1;
     int tmp;
-    for(size_t i=0;i<flags.size();i++)
+    for(int i=0;i<flags.size();i++)
         for(int j=0;j<2;j++)
         {
-            double fx=flags[i].a[j].x()*Psize+Psize/2, fy=flags[i].a[j].y()*Psize+Psize/2;
-            if(distance(QPoint(x-fx, y-fy))<r)moveFlag=i, tmp=j;
+            double fx=flags[i].a[j].x(), fy=flags[i].a[j].y();
+            if(x>=fx*Psize && x<(fx+1)*Psize && y>=fy*Psize && y<(fy+1)*Psize)moveFlag=i, tmp=j;
         }
     if(moveFlag!=-1)
     {
-        for(size_t i=0;i<path[moveFlag].size();i++)filled[path[moveFlag][i].x()][path[moveFlag][i].y()]=-1;
+        for(int i=0;i<path[moveFlag].size();i++)filled[path[moveFlag][i].x()][path[moveFlag][i].y()]=-1;
         path[moveFlag].clear();
         path[moveFlag].push_back(flags[moveFlag].a[tmp]);
         filled[flags[moveFlag].a[tmp].x()][flags[moveFlag].a[tmp].y()]=moveFlag;
+    }
+    else
+    {
+        int fx, fy;
+        for(int i=0;i<n;i++)
+            for(int j=0;j<n;j++)
+            {
+                if(x>=i*Psize && x<(i+1)*Psize && y>=j*Psize && y<(j+1)*Psize)moveFlag=filled[i][j], fx=i, fy=j;
+            }
+        if(moveFlag!=-1)
+        {
+            while(path[moveFlag].back()!=QPoint(fx, fy))
+                filled[path[moveFlag].back().x()][path[moveFlag].back().y()]=-1, path[moveFlag].removeLast();
+        }
     }
     Update(x, y);
 }
 
 bool GameScene::checkFlag(int x, int y)
 {
-    for(size_t i=0;i<flags.size();i++)for(int j=0;j<2;j++)
-        if(flags[i].a[j].x() == x && flags[i].a[j].y() == y)return i==moveFlag;
+    for(int i=0;i<flags.size();i++)for(int j=0;j<2;j++)
+        if(flags[i].a[j].x() == x && flags[i].a[j].y() == y)return (i==moveFlag);
     return true;
 }
 
@@ -94,22 +119,45 @@ void GameScene::Move(int x, int y)
                     if(filled[fx][fy] != -1)
                     {
                         int tmp = filled[fx][fy];
-                        for(size_t j=0;j<path[tmp].size();j++)filled[path[tmp][j].x()][path[tmp][j].y()]=-1;
+                        for(int j=0;j<path[tmp].size();j++)filled[path[tmp][j].x()][path[tmp][j].y()]=-1;
                         path[tmp].clear();
                     }
                     path[moveFlag].push_back(QPoint(fx, fy));
                     filled[fx][fy]=moveFlag;
                 }
-                break;
             }
         }
+        /*
+        for(size_t k=0;k<path[moveFlag].size();k++)
+        {
+            for(int i=0;i<4;i++)
+            {
+                int fx=path[moveFlag][k].x()+dx[i], fy=path[moveFlag][k].y()+dy[i];
+                if(x>=fx*Psize && x<(fx+1)*Psize && y>=fy*Psize && y<(fy+1)*Psize){
+                    while(path[moveFlag].size()>k+1)
+                        filled[path[moveFlag].back().x()][path[moveFlag].back().y()]=-1, path[moveFlag].removeLast();
+                    if(filled[fx][fy]!=moveFlag && checkFlag(fx, fy))
+                    {
+                        if(filled[fx][fy] != -1)
+                        {
+                            int tmp = filled[fx][fy];
+                            for(size_t j=0;j<path[tmp].size();j++)filled[path[tmp][j].x()][path[tmp][j].y()]=-1;
+                            path[tmp].clear();
+                        }
+                        path[moveFlag].push_back(QPoint(fx, fy));
+                        filled[fx][fy]=moveFlag;
+                    }
+                }
+            }
+        }
+        */
     }
     Update(x, y);
 }
 
 void GameScene::Release(int x, int y)
 {
-    if(moveFlag!=-1){
+    /*if(moveFlag!=-1){
         if(path[moveFlag].size()>1 && (path[moveFlag].back()==flags[moveFlag].a[0]||path[moveFlag].back()==flags[moveFlag].a[1]))
             moveFlag=-1;
         else
@@ -117,7 +165,7 @@ void GameScene::Release(int x, int y)
             for(size_t j=0;j<path[moveFlag].size();j++)filled[path[moveFlag][j].x()][path[moveFlag][j].y()]=-1;
             path[moveFlag].clear();
         }
-    }
+    }*/
     moveFlag = -1;
     Update(x, y);
 }
@@ -125,6 +173,7 @@ void GameScene::Release(int x, int y)
 void GameScene::Update(int x, int y)
 {
     this->clear();
+    if(!n)return;
     makeMap();
     /*
     for(size_t i=0;i<path.size();i++)
@@ -137,8 +186,8 @@ void GameScene::Update(int x, int y)
             this->addRect(x, y, w, h, flags[i].pen, flags[i].brush);
         }
     */
-    for(size_t i=0;i<path.size();i++)
-        for(int j=0;j<int(path[i].size())-1;j++)
+    for(int i=0;i<path.size();i++)
+        for(int j=0;j<path[i].size()-1;j++)
         {
             QPen pen(flags[i].brush, PathR, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
             this->addLine(Psize*path[i][j].x()+Psize/2, Psize*path[i][j].y()+Psize/2, Psize*path[i][j+1].x()+Psize/2, Psize*path[i][j+1].y()+Psize/2, pen);
