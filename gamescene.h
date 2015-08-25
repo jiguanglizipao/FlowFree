@@ -8,6 +8,7 @@
 #include <QPoint>
 #include <QtMath>
 #include <QVector>
+#include <QSound>
 
 struct Flags
 {
@@ -52,6 +53,7 @@ private:
     QVector<QVector<QPoint> > path;
     bool checkFlag(int x, int y);
     void Update(int x=0, int y=0);
+    QSound *Broke, *Flow;
     /*double distance(QPoint x)
     {
         return qSqrt(qPow(x.x(), 2) + qPow(x.y(), 2));

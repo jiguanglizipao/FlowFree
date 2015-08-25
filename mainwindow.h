@@ -6,6 +6,7 @@
 #include <QWidget>
 #include <QBoxLayout>
 #include <QPushButton>
+#include <QComboBox>
 
 class MainWindow : public QWidget
 {
@@ -15,15 +16,17 @@ public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
 public slots:
-    void loadGame();
+    void loadGame(QString File = "");
     void againGame();
     void nextGame();
-    void beforeGame();
+    void previousGame();
     void newGame();
     void solveGame();
+    void selectGame();
 private:
     GameScene *MainScene;
     GameView *MainView;
+    QComboBox *SelectBox;
     QVector<Data> gameData;
     QVector<QVector<QVector<QPoint> > > gameSave;
     int gameNumber;

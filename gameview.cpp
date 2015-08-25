@@ -1,6 +1,8 @@
 #include "gameview.h"
 #include <QDebug>
 #include <QMouseEvent>
+#include <QResizeEvent>
+#include <iostream>
 
 GameView::GameView(GameScene *scene, QWidget *parent)
     :QGraphicsView(scene, parent), Scene(scene)

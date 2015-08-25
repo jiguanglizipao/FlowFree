@@ -8,26 +8,37 @@
 MainWindow::MainWindow(QWidget *parent)
     : QWidget(parent)
 {
-    QVBoxLayout *Rightlayout = new QVBoxLayout;
+    QVBoxLayout *Rightlayout = new QVBoxLayout, *Selectlayout = new QVBoxLayout;
+
+    SelectBox = new QComboBox(this);
+    SelectBox->addItem("Easy");
+    SelectBox->addItem("Medium");
+    SelectBox->addItem("Hard");
+
+    QPushButton *SelectButton = new QPushButton("S&elect Level", this);
+    Selectlayout->addWidget(SelectBox);
+    Selectlayout->addWidget(SelectButton);
 
     //QPushButton *NewButton = new QPushButton("&New", this);
     QPushButton *AgainButton = new QPushButton("&Again", this);
-    QPushButton *BeforeButton = new QPushButton("&Before", this);
-    QPushButton *NextButton = new QPushButton("N&ext", this);
+    QPushButton *PreviousButton = new QPushButton("&Previous", this);
+    QPushButton *NextButton = new QPushButton("&Next", this);
     QPushButton *LoadButton = new QPushButton("&Load", this);
     QPushButton *SolveButton = new QPushButton("&Solve", this);
 
-    //Rightlayout->addWidget(NewButton);
+
+    Rightlayout->addLayout(Selectlayout);
     Rightlayout->addWidget(AgainButton);
-    Rightlayout->addWidget(BeforeButton);
+    Rightlayout->addWidget(PreviousButton);
     Rightlayout->addWidget(NextButton);
     Rightlayout->addWidget(LoadButton);
     Rightlayout->addWidget(SolveButton);
 
+    connect(SelectButton, SIGNAL(pressed()), this, SLOT(selectGame()));
     connect(LoadButton, SIGNAL(pressed()), this, SLOT(loadGame()));
     //connect(NewButton, SIGNAL(pressed()), this, SLOT(newGame()));
     connect(AgainButton, SIGNAL(pressed()), this, SLOT(againGame()));
-    connect(BeforeButton, SIGNAL(pressed()), this, SLOT(beforeGame()));
+    connect(PreviousButton, SIGNAL(pressed()), this, SLOT(previousGame()));
     connect(NextButton, SIGNAL(pressed()), this, SLOT(nextGame()));
     connect(SolveButton, SIGNAL(pressed()), this, SLOT(solveGame()));
 
@@ -45,9 +56,10 @@ MainWindow::MainWindow(QWidget *parent)
     gameNumber=-1;
 }
 
-void MainWindow::loadGame()
+void MainWindow::loadGame(QString File)
 {
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Open Files"), "", tr("ff Files(*.ff);;All Files(*.*)"));
+    QString fileName;
+    if(File != "")fileName = File;else fileName = QFileDialog::getOpenFileName(this, tr("Open Files"), "", tr("ff Files(*.ff);;All Files(*.*)"));
     if (fileName == "") return;
     QFile file(fileName);
     if (!file.open(QFile::ReadOnly | QFile::Text)) {
@@ -91,7 +103,7 @@ void MainWindow::againGame()
     if(gameNumber!=-1)MainScene->Init(gameData[gameNumber]);
 }
 
-void MainWindow::beforeGame()
+void MainWindow::previousGame()
 {
     if(gameNumber>0)MainScene->Init(gameData[--gameNumber]);
 }
@@ -105,6 +117,24 @@ void MainWindow::solveGame()
 {
     if(gameNumber!=-1)MainScene->Solve(gameSave[gameNumber]);
 }
+
+void MainWindow::selectGame()
+{
+    switch (SelectBox->currentIndex()) {
+    case 0:
+        loadGame("://res/5x5.ff");
+        break;
+    case 1:
+        loadGame("://res/6x6.ff");
+        break;
+    case 2:
+        loadGame("://res/7x7.ff");
+        break;
+    default:
+        break;
+    }
+}
+
 
 MainWindow::~MainWindow()
 {

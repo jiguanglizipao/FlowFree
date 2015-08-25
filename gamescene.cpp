@@ -5,6 +5,8 @@ GameScene::GameScene(QWidget *parent, int _size)
     :QGraphicsScene(parent), size(_size), n(0), moveFlag(-1)
 {
     this->setBackgroundBrush(Qt::black);
+    Broke = new QSound("://res/broke.wav", this);
+    Flow = new QSound("://res/flow.wav", this);
 }
 
 void GameScene::Init(Data &a)
@@ -116,14 +118,17 @@ void GameScene::Move(int x, int y)
                     filled[path[moveFlag].back().x()][path[moveFlag].back().y()]=-1, path[moveFlag].removeLast();
                 if(filled[fx][fy]!=moveFlag && checkFlag(fx, fy))
                 {
+                    if(path[moveFlag].size()>1 && (path[moveFlag].back()==flags[moveFlag].a[0]||path[moveFlag].back()==flags[moveFlag].a[1])) return Update(x, y);
                     if(filled[fx][fy] != -1)
                     {
+                        Broke->play();
                         int tmp = filled[fx][fy];
                         for(int j=0;j<path[tmp].size();j++)filled[path[tmp][j].x()][path[tmp][j].y()]=-1;
                         path[tmp].clear();
                     }
                     path[moveFlag].push_back(QPoint(fx, fy));
                     filled[fx][fy]=moveFlag;
+                    if(path[moveFlag].size()>1 && (path[moveFlag].back()==flags[moveFlag].a[0]||path[moveFlag].back()==flags[moveFlag].a[1])) Flow->play();
                 }
             }
         }
