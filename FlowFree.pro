@@ -16,11 +16,13 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     gamescene.cpp \
-    gameview.cpp
+    gameview.cpp \
+    gamesolver.cpp
 
 HEADERS  += mainwindow.h \
     gamescene.h \
-    gameview.h
+    gameview.h \
+    gamesolver.h
 
 FORMS +=
 

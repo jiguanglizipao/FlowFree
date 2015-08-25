@@ -9,23 +9,7 @@
 #include <QtMath>
 #include <QVector>
 #include <QSound>
-
-struct Flags
-{
-    QPoint a[2];
-    QBrush brush;
-    QPen pen;
-    Flags(QPoint a1=QPoint(), QPoint a2=QPoint(), QPen _pen = QPen(), QBrush _brush = QBrush())
-    {
-        a[0]=a1, a[1]=a2, brush=_brush, pen=_pen;
-    }
-};
-
-struct Data
-{
-    QVector<Flags> flags;
-    int n;
-};
+#include "gamesolver.h"
 
 class GameScene : public QGraphicsScene
 {

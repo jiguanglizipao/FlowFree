@@ -22,6 +22,7 @@ public slots:
     void previousGame();
     void newGame();
     void solveGame();
+    void answerGame();
     void selectGame();
 private:
     GameScene *MainScene;

@@ -9,6 +9,7 @@ MainWindow::MainWindow(QWidget *parent)
     : QWidget(parent)
 {
     QVBoxLayout *Rightlayout = new QVBoxLayout, *Selectlayout = new QVBoxLayout;
+    QHBoxLayout *Mainlayout = new QHBoxLayout, *Solvelayout = new QHBoxLayout;
 
     SelectBox = new QComboBox(this);
     SelectBox->addItem("Easy");
@@ -24,15 +25,18 @@ MainWindow::MainWindow(QWidget *parent)
     QPushButton *PreviousButton = new QPushButton("&Previous", this);
     QPushButton *NextButton = new QPushButton("&Next", this);
     QPushButton *LoadButton = new QPushButton("&Load", this);
-    QPushButton *SolveButton = new QPushButton("&Solve", this);
 
+    QPushButton *SolveButton = new QPushButton("&Solve", this);
+    QPushButton *AnswerButton = new QPushButton("Ans&wer", this);
+    Solvelayout->addWidget(SolveButton);
+    Solvelayout->addWidget(AnswerButton);
 
     Rightlayout->addLayout(Selectlayout);
     Rightlayout->addWidget(AgainButton);
     Rightlayout->addWidget(PreviousButton);
     Rightlayout->addWidget(NextButton);
     Rightlayout->addWidget(LoadButton);
-    Rightlayout->addWidget(SolveButton);
+    Rightlayout->addLayout(Solvelayout);
 
     connect(SelectButton, SIGNAL(pressed()), this, SLOT(selectGame()));
     connect(LoadButton, SIGNAL(pressed()), this, SLOT(loadGame()));
@@ -41,8 +45,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(PreviousButton, SIGNAL(pressed()), this, SLOT(previousGame()));
     connect(NextButton, SIGNAL(pressed()), this, SLOT(nextGame()));
     connect(SolveButton, SIGNAL(pressed()), this, SLOT(solveGame()));
+    connect(AnswerButton, SIGNAL(pressed()), this, SLOT(answerGame()));
 
-    QHBoxLayout *Mainlayout = new QHBoxLayout;
     MainScene = new GameScene(this, 700);
     MainView = new GameView(MainScene, this);
     connect(MainView, SIGNAL(Press(int,int)), MainScene, SLOT(Press(int,int)));
@@ -114,6 +118,11 @@ void MainWindow::nextGame()
 }
 
 void MainWindow::solveGame()
+{
+    if(gameNumber!=-1)MainScene->Solve(gameSolver()(gameData[gameNumber]));
+}
+
+void MainWindow::answerGame()
 {
     if(gameNumber!=-1)MainScene->Solve(gameSave[gameNumber]);
 }

@@ -16,9 +16,9 @@ void GameScene::Init(Data &a)
     filled.resize(n);
     for(int i=0;i<n;i++)filled[i].resize(n);
     for(int i=0;i<n;i++)for(int j=0;j<n;j++)filled[i][j]=-1;
-    FlagR = Psize*.4;
-    CircleR = Psize*.6;
-    PathR = Psize*.2;
+    FlagR = Psize*.6;
+    CircleR = Psize*.8;
+    PathR = Psize*.3;
     flags = a.flags;
     path.resize(flags.size());
     for(int i=0;i<path.size();i++)path[i].clear();
@@ -177,6 +177,10 @@ void GameScene::Release(int x, int y)
 
 void GameScene::Solve(const QVector<QVector<QPoint> > &_path)
 {
+    if(_path.empty()){
+        qDebug()<<"no answer";
+        return;
+    }
     path = _path;
     for(int i=0;i<n;i++)for(int j=0;j<n;j++)filled[i][j]=-1;
     for(int i=0;i<path.size();i++)for(int j=0;j<path[i].size();j++)filled[path[i][j].x()][path[i][j].y()]=i;
