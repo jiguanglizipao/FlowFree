@@ -1,58 +1,37 @@
 #include "mainwindow.h"
+#include "ui_mainwindow.h"
 #include <QFile>
-#include <QDebug>
 #include <QFileDialog>
-#include <QMessageBox>
 #include <QTextStream>
+#include <QMessageBox>
+#include <QSignalMapper>
 
-MainWindow::MainWindow(QWidget *parent)
-    : QWidget(parent)
+MainWindow::MainWindow(QWidget *parent) :
+    QMainWindow(parent),
+    ui(new Ui::MainWindow)
 {
-    QVBoxLayout *Rightlayout = new QVBoxLayout, *Selectlayout = new QVBoxLayout;
-    QHBoxLayout *Mainlayout = new QHBoxLayout, *Solvelayout = new QHBoxLayout;
+    ui->setupUi(this);
+    gameScene = new GameScene(this);
+    ui->gameView->setScene(gameScene);
 
-    SelectBox = new QComboBox(this);
-    SelectBox->addItem("Easy");
-    SelectBox->addItem("Medium");
-    SelectBox->addItem("Hard");
+    connect(ui->selectButton, SIGNAL(pressed()), this, SLOT(selectGame()));
+    connect(ui->loadButton, SIGNAL(pressed()), this, SLOT(loadGame()));
+    connect(ui->againButton, SIGNAL(pressed()), this, SLOT(againGame()));
+    connect(ui->previousButton, SIGNAL(pressed()), this, SLOT(previousGame()));
+    connect(ui->nextButton, SIGNAL(pressed()), this, SLOT(nextGame()));
+    connect(ui->computeButton, SIGNAL(pressed()), this, SLOT(computeGame()));
+    connect(ui->answerButton, SIGNAL(pressed()), this, SLOT(answerGame()));
 
-    QPushButton *SelectButton = new QPushButton("S&elect Level", this);
-    Selectlayout->addWidget(SelectBox);
-    Selectlayout->addWidget(SelectButton);
+    QSignalMapper *signalMapper = new QSignalMapper(this);
+    connect(ui->actionEasy, SIGNAL(triggered()), signalMapper, SLOT(map()));
+    connect(ui->actionMedium, SIGNAL(triggered()), signalMapper, SLOT(map()));
+    connect(ui->actionHard, SIGNAL(triggered()), signalMapper, SLOT(map()));
+    signalMapper->setMapping(ui->actionEasy, 1);
+    signalMapper->setMapping(ui->actionMedium, 2);
+    signalMapper->setMapping(ui->actionHard, 3);
+    connect(signalMapper, SIGNAL(mapped(int)), this, SLOT(selectGame(int)));
 
-    //QPushButton *NewButton = new QPushButton("&New", this);
-    QPushButton *AgainButton = new QPushButton("&Again", this);
-    QPushButton *PreviousButton = new QPushButton("&Previous", this);
-    QPushButton *NextButton = new QPushButton("&Next", this);
-    QPushButton *LoadButton = new QPushButton("&Load", this);
-
-    QPushButton *SolveButton = new QPushButton("&Solve", this);
-    QPushButton *AnswerButton = new QPushButton("Ans&wer", this);
-    Solvelayout->addWidget(SolveButton);
-    Solvelayout->addWidget(AnswerButton);
-
-    Rightlayout->addLayout(Selectlayout);
-    Rightlayout->addWidget(AgainButton);
-    Rightlayout->addWidget(PreviousButton);
-    Rightlayout->addWidget(NextButton);
-    Rightlayout->addWidget(LoadButton);
-    Rightlayout->addLayout(Solvelayout);
-
-    connect(SelectButton, SIGNAL(pressed()), this, SLOT(selectGame()));
-    connect(LoadButton, SIGNAL(pressed()), this, SLOT(loadGame()));
-    //connect(NewButton, SIGNAL(pressed()), this, SLOT(newGame()));
-    connect(AgainButton, SIGNAL(pressed()), this, SLOT(againGame()));
-    connect(PreviousButton, SIGNAL(pressed()), this, SLOT(previousGame()));
-    connect(NextButton, SIGNAL(pressed()), this, SLOT(nextGame()));
-    connect(SolveButton, SIGNAL(pressed()), this, SLOT(solveGame()));
-    connect(AnswerButton, SIGNAL(pressed()), this, SLOT(answerGame()));
-
-    MainScene = new GameScene(this, 700);
-    MainView = new GameView(MainScene, this);
-    Mainlayout->addWidget(MainView);
-    Mainlayout->addLayout(Rightlayout);
-    this->setLayout(Mainlayout);
-    this->resize(QSize(1024, 768));
+    connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(displayAbout()));
 
     gameNumber=-1;
 }
@@ -91,42 +70,43 @@ void MainWindow::loadGame(QString File)
         }
     }
     gameNumber=0;
-    MainScene->Init(gameData[0]);
+    gameScene->Init(gameData[0]);
 }
 
 void MainWindow::newGame()
 {
-    if(gameNumber!=-1)MainScene->Init(gameData[0]);
+    if(gameNumber!=-1)gameScene->Init(gameData[0]);
 }
 
 void MainWindow::againGame()
 {
-    if(gameNumber!=-1)MainScene->Init(gameData[gameNumber]);
+    if(gameNumber!=-1)gameScene->Init(gameData[gameNumber]);
 }
 
 void MainWindow::previousGame()
 {
-    if(gameNumber>0)MainScene->Init(gameData[--gameNumber]);
+    if(gameNumber>0)gameScene->Init(gameData[--gameNumber]);
 }
 
 void MainWindow::nextGame()
 {
-    if(gameNumber<gameData.size()-1)MainScene->Init(gameData[++gameNumber]);
+    if(gameNumber<gameData.size()-1)gameScene->Init(gameData[++gameNumber]);
 }
 
-void MainWindow::solveGame()
+void MainWindow::computeGame()
 {
-    if(gameNumber!=-1)MainScene->Solve(gameSolver()(gameData[gameNumber]));
+    if(gameNumber!=-1)gameScene->Solve(gameSolver()(gameData[gameNumber]));
 }
 
 void MainWindow::answerGame()
 {
-    if(gameNumber!=-1)MainScene->Solve(gameSave[gameNumber]);
+    if(gameNumber!=-1)gameScene->Solve(gameSave[gameNumber]);
 }
 
-void MainWindow::selectGame()
+void MainWindow::selectGame(int num)
 {
-    switch (SelectBox->currentIndex()) {
+    if(num == -1)num = ui->selectBox->currentIndex();
+    switch (num) {
     case 0:
         loadGame("://res/5x5.ff");
         break;
@@ -141,8 +121,19 @@ void MainWindow::selectGame()
     }
 }
 
+void MainWindow::displayAbout()
+{
+    QMessageBox aboutBox(this);
+    aboutBox.setToolTip("About this Application");
+    aboutBox.setText("<h2>Flow Free</h2>"
+                     "<h4>By: </h4><p>&nbsp;&nbsp;&nbsp;&nbsp;Jiguanglizipao</p>"
+                     "<h4>Website: </h4><p><a href=https://github.com/jiguanglizipao/FlowFree>https://github.com/jiguanglizipao/FlowFree</a></p>");
+    aboutBox.setIconPixmap(QPixmap("://res/zerg.png"));
+    aboutBox.exec();
+}
+
 
 MainWindow::~MainWindow()
 {
-
+    delete ui;
 }

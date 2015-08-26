@@ -10,7 +10,8 @@ class GameView : public QGraphicsView
 {
     Q_OBJECT
 public:
-    GameView(GameScene *scene, QWidget *parent = 0);
+    GameView(QWidget *parent = 0);
+    void setScene(GameScene *scene);
 protected:
     void mousePressEvent(QMouseEvent  *event);
     void mouseMoveEvent(QMouseEvent  *event);

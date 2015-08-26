@@ -24,7 +24,7 @@ HEADERS  += mainwindow.h \
     gameview.h \
     gamesolver.h
 
-FORMS +=
+FORMS  += mainwindow.ui
 
 RESOURCES += \
     res.qrc

@@ -1,36 +1,39 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <QMainWindow>
 #include "gamescene.h"
-#include "gameview.h"
-#include <QWidget>
-#include <QBoxLayout>
-#include <QPushButton>
-#include <QComboBox>
+#include "gamesolver.h"
 
-class MainWindow : public QWidget
+namespace Ui {
+class MainWindow;
+}
+
+class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = 0);
+    explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+
 public slots:
     void loadGame(QString File = "");
     void againGame();
     void nextGame();
     void previousGame();
     void newGame();
-    void solveGame();
+    void computeGame();
     void answerGame();
-    void selectGame();
+    void selectGame(int num=-1);
+    void displayAbout();
+
 private:
-    GameScene *MainScene;
-    GameView *MainView;
-    QComboBox *SelectBox;
+    GameScene *gameScene;
     QVector<Data> gameData;
     QVector<QVector<QVector<QPoint> > > gameSave;
     int gameNumber;
+    Ui::MainWindow *ui;
 };
 
 #endif // MAINWINDOW_H

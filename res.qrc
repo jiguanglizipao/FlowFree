@@ -6,5 +6,6 @@
         <file>res/broke.wav</file>
         <file>res/flow.wav</file>
         <file>res/success.wav</file>
+        <file>res/zerg.png</file>
     </qresource>
 </RCC>

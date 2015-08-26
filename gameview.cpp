@@ -4,8 +4,8 @@
 #include <QResizeEvent>
 #include <iostream>
 
-GameView::GameView(GameScene *scene, QWidget *parent)
-    :QGraphicsView(scene, parent), Scene(scene)
+GameView::GameView(QWidget *parent)
+    :QGraphicsView(parent)
 {
     //this->setFixedSize(705, 705);
     //Scene->setSceneRect(0, 0, 700, 700);
@@ -41,6 +41,12 @@ void GameView::resizeEvent(QResizeEvent *event)
     Scene->setSceneRect(0, 0, size, size);
     Scene->Resize(size);
     QGraphicsView::resizeEvent(event);
+}
+
+void GameView::setScene(GameScene *scene)
+{
+    Scene = scene;
+    QGraphicsView::setScene(scene);
 }
 
 
