@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QWidget>
+#include <QResizeEvent>
 #include "gamescene.h"
 
 class GameView : public QGraphicsView
@@ -14,6 +15,7 @@ protected:
     void mousePressEvent(QMouseEvent  *event);
     void mouseMoveEvent(QMouseEvent  *event);
     void mouseReleaseEvent(QMouseEvent *event);
+    void resizeEvent(QResizeEvent * event);
 signals:
     void Press(int x, int y);
     void Move(int x, int y);

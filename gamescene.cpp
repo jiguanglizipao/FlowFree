@@ -7,6 +7,7 @@ GameScene::GameScene(QWidget *parent, int _size)
     this->setBackgroundBrush(Qt::black);
     Broke = new QSound("://res/broke.wav", this);
     Flow = new QSound("://res/flow.wav", this);
+    Success = new QSound("://res/success.wav", this);
 }
 
 void GameScene::Init(Data &a)
@@ -22,6 +23,16 @@ void GameScene::Init(Data &a)
     flags = a.flags;
     path.resize(flags.size());
     for(int i=0;i<path.size();i++)path[i].clear();
+    Update(false);
+}
+
+void GameScene::Resize(int _size)
+{
+    size = _size;
+    Psize = double(size)/double(n);
+    FlagR = Psize*.6;
+    CircleR = Psize*.8;
+    PathR = Psize*.3;
     Update(false);
 }
 
@@ -123,8 +134,14 @@ void GameScene::Move(int x, int y)
                     {
                         Broke->play();
                         int tmp = filled[fx][fy];
-                        for(int j=0;j<path[tmp].size();j++)filled[path[tmp][j].x()][path[tmp][j].y()]=-1;
-                        path[tmp].clear();
+                        for(;path[tmp].size();path[tmp].removeLast()){
+                            filled[path[tmp].back().x()][path[tmp].back().y()]=-1;
+                            if(path[tmp].back().x()==fx && path[tmp].back().y()==fy){
+                                path[tmp].removeLast();
+                                break;
+                            }
+                        }
+                        //path[tmp].clear();
                     }
                     path[moveFlag].push_back(QPoint(fx, fy));
                     filled[fx][fy]=moveFlag;
@@ -162,15 +179,15 @@ void GameScene::Move(int x, int y)
 
 void GameScene::Release(int x, int y)
 {
-    /*if(moveFlag!=-1){
-        if(path[moveFlag].size()>1 && (path[moveFlag].back()==flags[moveFlag].a[0]||path[moveFlag].back()==flags[moveFlag].a[1]))
-            moveFlag=-1;
-        else
+    if(moveFlag!=-1){
+        bool f=true;
+        for(int i=0;i<n;i++)for(int j=0;j<n;j++)if(filled[i][j] == -1)
         {
-            for(size_t j=0;j<path[moveFlag].size();j++)filled[path[moveFlag][j].x()][path[moveFlag][j].y()]=-1;
-            path[moveFlag].clear();
+            f = false;
+            break;
         }
-    }*/
+        if(f)Success->play();
+    }
     moveFlag = -1;
     Update(x, y);
 }
@@ -184,6 +201,7 @@ void GameScene::Solve(const QVector<QVector<QPoint> > &_path)
     path = _path;
     for(int i=0;i<n;i++)for(int j=0;j<n;j++)filled[i][j]=-1;
     for(int i=0;i<path.size();i++)for(int j=0;j<path[i].size();j++)filled[path[i][j].x()][path[i][j].y()]=i;
+    Success->play();
     Update();
 }
 
