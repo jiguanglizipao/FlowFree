@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>res/zerg.png</file>
+    </qresource>
+</RCC>

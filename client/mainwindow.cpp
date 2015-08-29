@@ -5,6 +5,7 @@
 #include <QTextStream>
 #include <QMessageBox>
 #include <QSignalMapper>
+#include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -34,6 +35,11 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(displayAbout()));
 
     gameNumber=-1;
+
+    socket = new QTcpSocket(this);
+    connect(socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(connectError(QAbstractSocket::SocketError)));
+    connect(socket, SIGNAL(connected()), this, SLOT(connected()));
+    connect(socket, SIGNAL(readyRead()), this, SLOT(getData()));
 }
 
 void MainWindow::loadGame(QString File)
@@ -136,4 +142,60 @@ void MainWindow::displayAbout()
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::connectError(QAbstractSocket::SocketError error)
+{
+    QMessageBox::critical(this, tr("ERROR!"), socket->errorString());
+    if(error != QAbstractSocket::SocketTimeoutError){
+        socket->disconnectFromHost();
+    }
+}
+
+void MainWindow::connected()
+{
+    QMessageBox::information(this, "Connected", "Connected to server successfuly");
+}
+
+void MainWindow::on_connectButton_clicked()
+{
+    QString tmp = ui->ipEdit->text();
+    int l = tmp.indexOf(':');
+    socket->connectToHost(tmp.left(l), tmp.mid(l+1).toInt());
+}
+
+void MainWindow::getData()
+{
+    socketData = socket->readAll();
+    qDebug()<<socketData;
+    ui->receiveButton->setEnabled(true);
+}
+
+void MainWindow::on_receiveButton_clicked()
+{
+    QTextStream in(&socketData);
+    int m, num;
+    gameData.clear();
+    gameSave.clear();
+    for(int i=0;i<1;i++){
+        gameData.push_back(Data());
+        in>>gameData[i].n>>m;
+        gameSave.push_back(QVector<QVector<QPoint> >());
+        for(int j=0;j<m;j++)
+        {
+            int x1, y1, x2, y2, r, g, b;
+            in>>x1>>y1>>x2>>y2>>r>>g>>b;
+            gameData[i].flags.push_back(Flags(QPoint(x1, y1), QPoint(x2, y2), QPen(QColor(r, g, b, 255)), QBrush(QColor(r, g, b, 255))));
+            gameSave[i].push_back(QVector<QPoint>());
+            in>>num;
+            for(int k=0;k<num;k++){
+                int x, y;
+                in>>x>>y;
+                gameSave[i][j].push_back(QPoint(x, y));
+            }
+        }
+    }
+    gameNumber=0;
+    gameScene->Init(gameData[0]);
+    ui->receiveButton->setEnabled(false);
 }
