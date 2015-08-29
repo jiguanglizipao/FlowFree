@@ -26,9 +26,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionEasy, SIGNAL(triggered()), signalMapper, SLOT(map()));
     connect(ui->actionMedium, SIGNAL(triggered()), signalMapper, SLOT(map()));
     connect(ui->actionHard, SIGNAL(triggered()), signalMapper, SLOT(map()));
-    signalMapper->setMapping(ui->actionEasy, 1);
-    signalMapper->setMapping(ui->actionMedium, 2);
-    signalMapper->setMapping(ui->actionHard, 3);
+    signalMapper->setMapping(ui->actionEasy, 0);
+    signalMapper->setMapping(ui->actionMedium, 1);
+    signalMapper->setMapping(ui->actionHard, 2);
     connect(signalMapper, SIGNAL(mapped(int)), this, SLOT(selectGame(int)));
 
     connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(displayAbout()));
