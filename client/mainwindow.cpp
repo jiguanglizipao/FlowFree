@@ -101,7 +101,7 @@ void MainWindow::nextGame()
 
 void MainWindow::computeGame()
 {
-    if(gameNumber!=-1)gameScene->Solve(gameSolver()(gameData[gameNumber]));
+    if(gameNumber!=-1)gameScene->Solve(GameSolver()(gameData[gameNumber]));
 }
 
 void MainWindow::answerGame()

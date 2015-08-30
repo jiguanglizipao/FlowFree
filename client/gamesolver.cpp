@@ -1,7 +1,7 @@
 #include "gamesolver.h"
 
 
-QVector<QVector<QPoint> > gameSolver::operator()(const Data &data)
+QVector<QVector<QPoint> > GameSolver::operator()(const Data &data)
 {
     f.clear();
     f.resize(data.n);
@@ -20,7 +20,7 @@ QVector<QVector<QPoint> > gameSolver::operator()(const Data &data)
     if(dfs(0, data.flags[0].a[0].x(), data.flags[0].a[0].y(), data))return path;else return QVector<QVector<QPoint> >();
 }
 
-bool gameSolver::dfs(int deep, int x, int y, const Data &data)
+bool GameSolver::dfs(int deep, int x, int y, const Data &data)
 {
     if(x==data.flags[deep].a[1].x() && y==data.flags[deep].a[1].y())
     {

@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Flow Free Client</string>
+   <string>Flow Free</string>
   </property>
   <property name="windowIcon">
    <iconset resource="res.qrc">

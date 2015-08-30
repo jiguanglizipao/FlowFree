@@ -23,7 +23,7 @@ struct Data
     int n;
 };
 
-class gameSolver
+class GameSolver
 {
 public:
     QVector<QVector<QPoint> > operator()(const Data &data);

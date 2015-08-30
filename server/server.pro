@@ -11,7 +11,7 @@ QT       += core gui\
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 DESTDIR = ../
-TARGET = FlowFree_server
+TARGET = FlowFree_Server
 TEMPLATE = app
 
 
