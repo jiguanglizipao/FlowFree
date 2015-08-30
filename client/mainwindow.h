@@ -18,7 +18,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-public slots:
+private slots:
     void loadGame(QString File = "");
     void againGame();
     void nextGame();
@@ -28,8 +28,6 @@ public slots:
     void answerGame();
     void selectGame(int num=-1);
     void displayAbout();
-
-private slots:
     void connectError(QAbstractSocket::SocketError error);
     void connected();
     void getData();
