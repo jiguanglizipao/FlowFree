@@ -15,7 +15,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="../client/res.qrc">
-    <normaloff>:/res/zerg.png</normaloff>:/res/zerg.png</iconset>
+    <normaloff>:/res/flowfree.png</normaloff>:/res/flowfree.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="horizontalLayout_2">

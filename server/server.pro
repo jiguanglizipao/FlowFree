@@ -28,4 +28,3 @@ RESOURCES += \
     res.qrc
 
 
-

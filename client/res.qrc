@@ -7,5 +7,6 @@
         <file>res/flow.wav</file>
         <file>res/success.wav</file>
         <file>res/zerg.png</file>
+        <file>res/flowfree.png</file>
     </qresource>
 </RCC>
